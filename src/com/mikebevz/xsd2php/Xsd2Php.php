@@ -64,38 +64,38 @@ class Xsd2Php extends Common
      * @var array
      */
     //private $namespaces;
-    
+
     /**
      * Short namespaces
-     * 
+     *
      * @var array
      */
     private $shortNamespaces;
-    
+
     /**
      * XML Source
-     * 
+     *
      * @var string
      */
     private $xmlSource;
-    
+
     /**
      * Target namespace
-     * 
+     *
      * @var string
      */
     private $targetNamespace;
 
     /**
      * XSD root namespace alias (fx, xsd = http://www.w3.org/2001/XMLSchema)
-     * 
+     *
      * @var string
      */
     private $xsdNs;
 
     /**
      * Already processed imports
-     * 
+     *
      * @var array
      */
     private $loadedImportFiles = array();
@@ -107,6 +107,17 @@ class Xsd2Php extends Common
      */
     private $importHeadNS = array();
 
+    /**
+     * Map of already generated paths for a XML namespace
+     * @var array
+     */
+    private $namespaceToPath = array();
+
+    /**
+     * Map of already generated PHP namespaces for an XML namespace
+     * @var array
+     */
+    private $namespaceToPhp = array();
 
     /**
      * XML Schema converted to XML
@@ -148,11 +159,11 @@ class Xsd2Php extends Common
 
         $this->dom = new \DOMDocument();
         $this->dom->load($this->xsdFile,
-        LIBXML_DTDLOAD |
-        LIBXML_DTDATTR |
-        LIBXML_NOENT |
-        LIBXML_XINCLUDE);
-         
+            LIBXML_DTDLOAD |
+            LIBXML_DTDATTR |
+            LIBXML_NOENT |
+            LIBXML_XINCLUDE);
+
         $this->xpath = new \DOMXPath($this->dom);
         $this->targetNamespace = $this->getTargetNS($this->xpath);
         $this->shortNamespaces = $this->getNamespaces($this->xpath);
@@ -199,8 +210,8 @@ class Xsd2Php extends Common
                 $this->xsdNs = preg_replace('/xmlns:(.*)/', "$1", $entry->nodeName);
             }
             if (//$entry->nodeName != $this->xsdNs
-            //&&
-            $entry->nodeName != 'xmlns:xml')  {
+                //&&
+                $entry->nodeName != 'xmlns:xml')  {
                 if (preg_match('/:/', $entry->nodeName)) {
                     $nodeName = explode(':', $entry->nodeName);
                     $nspaces[$nodeName[1]] = $entry->nodeValue;
@@ -263,7 +274,7 @@ class Xsd2Php extends Common
             }
             $filepath = dirname($xsdFileName);
             $result = $xsd->load($xsdFileName,
-            LIBXML_DTDLOAD|LIBXML_DTDATTR|LIBXML_NOENT|LIBXML_XINCLUDE);
+                LIBXML_DTDLOAD|LIBXML_DTDATTR|LIBXML_NOENT|LIBXML_XINCLUDE);
             if ($result) {
                 $mxpath = new \DOMXPath($xsd);
                 $this->shortNamespaces = array_merge($this->shortNamespaces, $this->getNamespaces($mxpath));
@@ -287,7 +298,7 @@ class Xsd2Php extends Common
 
                     continue;
                 } else {
-                    //if ($this->debug) print($node->nodeName." \n". $namespace. "\n");
+                    if ($this->debug) print($node->nodeName." \n". $namespace. "\n");
                     $newNodeNs = $xsd->createAttribute("namespace");
                     $textEl = $xsd->createTextNode($namespace);
                     $newNodeNs->appendChild($textEl);
@@ -317,7 +328,7 @@ class Xsd2Php extends Common
      *
      * @param DOMDocument $dom       Instance of DOMDocument
      * @param string      $filepath
-     * @param string	  $namespace
+     * @param string      $namespace
      *
      * @return void
      */
@@ -338,7 +349,7 @@ class Xsd2Php extends Common
             }
 
             $result = $xsd->load($xsdFileName,
-            LIBXML_DTDLOAD|LIBXML_DTDATTR|LIBXML_NOENT|LIBXML_XINCLUDE);
+                LIBXML_DTDLOAD|LIBXML_DTDATTR|LIBXML_NOENT|LIBXML_XINCLUDE);
             if ($result) {
                 $mxpath = new \DOMXPath($xsd);
                 $this->shortNamespaces = array_merge($this->shortNamespaces, $this->getNamespaces($mxpath));
@@ -367,12 +378,12 @@ class Xsd2Php extends Common
             $parent->removeChild($entry);
         }
 
-/*         $xpath = new \DOMXPath($dom);
-        $query = "//*[local-name()='include' and namespace-uri()='http://www.w3.org/2001/XMLSchema']";
-        $includes = $xpath->query($query);
-        if ($includes->length != 0) {
-            $dom = $this->loadIncludes($dom);
-        } */
+        /*         $xpath = new \DOMXPath($dom);
+                $query = "//*[local-name()='include' and namespace-uri()='http://www.w3.org/2001/XMLSchema']";
+                $includes = $xpath->query($query);
+                if ($includes->length != 0) {
+                    $dom = $this->loadIncludes($dom);
+                } */
 
         if ($this->debug) print_r("\n------------------------------------\n");
 
@@ -420,7 +431,7 @@ class Xsd2Php extends Common
             return $dom;
         } catch (\Exception $e) {
             throw new \Exception(
-                    "Error interpreting XSD document (".$e->getMessage().")");
+                "Error interpreting XSD document (".$e->getMessage().")");
         }
     }
 
@@ -444,9 +455,9 @@ class Xsd2Php extends Common
             mkdir($dir, 0777, true);
         }
 
-        $classes = $this->getPHP();
-
+        $classes = $this->getPHP(rtrim($dir, '/'));
         foreach ($classes as $fullkey => $value) {
+            //echo 'this  value '.$value;exit;
             $keys = explode("|", $fullkey);
             $key = $keys[0];
             $namespace = $this->namespaceToPath($keys[1]);
@@ -464,7 +475,7 @@ class Xsd2Php extends Common
      *
      * @return string
      */
-    private function getPHP() {
+    private function getPHP($dir) {
         $phpfile = $this->getXmlForPhp();
         if ($phpfile == '' && $this->getXmlSource() == '') {
             throw new \RuntimeException('There is no XML generated');
@@ -474,14 +485,14 @@ class Xsd2Php extends Common
         //print_r($this->getXmlSource());
         if ($this->getXmlSource() != '') {
             $dom->loadXML($this->getXmlSource(), LIBXML_DTDLOAD | LIBXML_DTDATTR |
-            LIBXML_NOENT | LIBXML_XINCLUDE);
+                                                 LIBXML_NOENT | LIBXML_XINCLUDE);
         } else {
             $dom->load($phpfile, LIBXML_DTDLOAD | LIBXML_DTDATTR |
-            LIBXML_NOENT | LIBXML_XINCLUDE);
+                                 LIBXML_NOENT | LIBXML_XINCLUDE);
         }
-         
+
         $xPath = new \DOMXPath($dom);
-         
+
         $classes = $xPath->query('//classes/class');
 
         $sourceCode = array();
@@ -502,10 +513,23 @@ class Xsd2Php extends Common
             }
 
             if ($class->getElementsByTagName('extends')->length > 0) {
-                if (!in_array($class->getElementsByTagName('extends')->item(0)->getAttribute('name'), $this->basicTypes)) {
-                    $phpClass->extends = $class->getElementsByTagName('extends')->item(0)->getAttribute('name');
-                    $phpClass->type    = $class->getElementsByTagName('extends')->item(0)->getAttribute('name');
-                    $phpClass->extendsNamespace = $this->namespaceToPhp($class->getElementsByTagName('extends')->item(0)->getAttribute('namespace'));
+                $rawType = $type = $class->getElementsByTagName('extends')->item(0)->getAttribute('name');
+                $extendsNamespace = $this->namespaceToPhp($class->getElementsByTagName('extends')->item(0)->getAttribute('namespace'));
+                $colonPos = strpos($type, ':');
+                if (empty($extendsNamespace) && $colonPos !== false)
+                {
+                    $ns = substr($type, 0, $colonPos);
+                    if (!empty($this->shortNamespaces[$ns]) && $this->shortNamespaces[$ns] == 'http://www.w3.org/2001/XMLSchema')
+                    {
+                        $type = substr ($type, $colonPos + 1);
+                        if (empty($phpClass->type))
+                            $phpClass->type = $type;
+                    }
+                }
+                if (!in_array($type, $this->basicTypes)) {
+                    $phpClass->extends = $type;
+                    $phpClass->type    = $rawType;
+                    $phpClass->extendsNamespace = $extendsNamespace;
                 }
             }
 
@@ -521,20 +545,21 @@ class Xsd2Php extends Common
             } else {
                 $docBlock['var'] = $phpClass->name;
             }
-            
+
             foreach ($docs as $doc) {
                 if ($doc->nodeValue != '') {
                     $docBlock["xml".$doc->getAttribute('name')] = $doc->nodeValue;
                 } elseif ($doc->getAttribute('value') != '') {
                     $docBlock["xml".$doc->getAttribute('name')] = $doc->getAttribute('value');
                 }
-                
+
             }
 
             $phpClass->classDocBlock = $docBlock;
 
             $props      = $xPath->query('property', $class);
             $properties = array();
+            $setterArr = [];
             $i = 0;
             $isArray = false;
             foreach($props as $prop) {
@@ -557,11 +582,11 @@ class Xsd2Php extends Common
                     // If maxOccurs > 1, mark type as an array
                     if ($prop->getAttribute('maxOccurs') > 1) {
                         $isArray = $prop->getAttribute('maxOccurs');
-                        
+
                     } elseif($prop->getAttribute('maxOccurs')=='unbounded') {
                         $isArray = true;
                     }
-                    
+
                 }
                 if ($prop->getAttribute('name') != '') {
                     $properties[$i]["docs"]['xmlName']      = $prop->getAttribute('name');
@@ -619,10 +644,26 @@ class Xsd2Php extends Common
                 $namespaceClause           = "namespace ".$this->namespaceToPhp($docBlock['xmlNamespace']).";\n";
             }
             $sourceCode[$docBlock['xmlName']."|".$phpClass->namespace] = "<?php\n".
-            $namespaceClause.
-            $phpClass->getPhpCode();
+                                                                         $namespaceClause.
+                                                                         $phpClass->getPhpCode($dir);
         }
         return $sourceCode;
+    }
+
+    protected function buildParametersString(array $parameters, $includeType = true, $defaultNull = false)
+    {
+        $parameterStrings = array();
+        foreach ($parameters as $name => $type) {
+            $parameterString = '$' . $name;
+            if (!empty($type) && $includeType) {
+                $parameterString = $type . ' ' . $parameterString;
+            }
+            if ($defaultNull) {
+                $parameterString .= ' = null';
+            }
+            $parameterStrings[] = $parameterString;
+        }
+        return implode(', ', $parameterStrings);
     }
 
     /**
@@ -639,11 +680,11 @@ class Xsd2Php extends Common
             if ($ns == $shortNs) {
                 $ns = $longNs;
             }
-             
+
         }
         return $ns;
     }
-     
+
     /**
      * Convert XML URI to PHP complient namespace
      *
@@ -652,6 +693,8 @@ class Xsd2Php extends Common
      * @return string
      */
     public function namespaceToPhp($xmlNS) {
+        if (!empty($this->namespaceToPhp[$xmlNS]))
+            return ($this->namespaceToPhp[$xmlNS]);
         $ns = $xmlNS;
         $ns = $this->expandNS($ns);
         if (preg_match('/urn:/',$ns)) {
@@ -660,14 +703,14 @@ class Xsd2Php extends Common
             $ns = preg_replace('/urn:/', '', $ns);
             $ns = preg_replace('/:/','\\', $ns);
         }
-         
+
         /**
-         if (preg_match('/http:\/\//', $ns)) {
-         $ns = preg_replace('/http:\/\//', '', $ns);
-         $ns = preg_replace('/\//','\\', $ns);
-         $ns = preg_replace('/\./', '\\',$ns);
-         }*/
-         
+        if (preg_match('/http:\/\//', $ns)) {
+        $ns = preg_replace('/http:\/\//', '', $ns);
+        $ns = preg_replace('/\//','\\', $ns);
+        $ns = preg_replace('/\./', '\\',$ns);
+        }*/
+
         $matches = array();
         if (preg_match("#((http|https|ftp)://(\S*?\.\S*?))(\s|\;|\)|\]|\[|\{|\}|,|\"|'|:|\<|$|\.\s)#", $ns, $matches)) {
             $elements = explode("/", $matches[3]);
@@ -680,12 +723,18 @@ class Xsd2Php extends Common
             foreach($elements as $key => $value) {
                 if ($value != '') {
                     $value = preg_replace('/\./', '_', $value);
+                    $hashpos = strpos($value, '#');
+                    if ($hashpos !== false)
+                    {
+                        $ns .= "\\" . substr($value, 0, $hashpos);
+                        break;
+                    }
                     $ns .= "\\" . $value;
                 }
             }
         }
-         
-         
+
+
         $ns = explode('\\', $ns);
         $i = 0;
         foreach($ns as $elem) {
@@ -700,10 +749,10 @@ class Xsd2Php extends Common
         }
 
         $ns = implode('\\', $ns);
-         
+        $this->namespaceToPhp[$xmlNS] = $ns;
         return $ns;
     }
-     
+
     /**
      * Convert XML URI to Path
      * @param string $xmlNS XML URI
@@ -711,6 +760,8 @@ class Xsd2Php extends Common
      * @return string
      */
     private function namespaceToPath($xmlNS) {
+        if (!empty($this->namespaceToPath[$xmlNS]))
+            return $this->namespaceToPath[$xmlNS];
         $ns = $xmlNS;
         $ns = $this->expandNS($ns);
 
@@ -733,7 +784,14 @@ class Xsd2Php extends Common
             foreach($elements as $key => $value) {
                 if ($value != '') {
                     $value = preg_replace('/[\.|-]/', '_', $value);
+                    $hashpos = strpos($value, '#');
+                    if ($hashpos !== false)
+                    {
+                        $ns .= DIRECTORY_SEPARATOR . substr($value, 0, $hashpos);
+                        break;
+                    }
                     $ns .= DIRECTORY_SEPARATOR . $value;
+
                 }
             }
         }
@@ -750,6 +808,7 @@ class Xsd2Php extends Common
             $i++;
         }
         $ns = implode(DIRECTORY_SEPARATOR, $ns);
+        $this->namespaceToPath[$xmlNS] = $ns;
         return $ns;
     }
 }
