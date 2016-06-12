@@ -1,5 +1,7 @@
 Legko XML
 
+[![Build Status](https://travis-ci.org/shadiakiki1986/XSD-to-PHP.svg?branch=master)](http://travis-ci.org/shadiakiki1986/XSD-to-PHP)
+
 !!!!
 Note: We are constantly looking for user stories on how they used LegkoXML (XSD2PHP).
 If you would like to help to our project, please send your story about how you have used
