@@ -15,7 +15,7 @@ namespace com\mikebevz\xsd2php;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-require_once 'Common.php';
+//require_once 'Common.php';
 
 /**
  * Bind XML to PHP binding

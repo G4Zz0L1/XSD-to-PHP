@@ -63,7 +63,8 @@ class Common {
         'interface', 'implements', 'instanceof', 'public', 'private',
         'protected', 'abstract', 'clone', 'try', 'catch',
         'throw', 'this', 'final', '__NAMESPACE__', 'namespace', 'goto',
-        '__DIR__'
+        '__DIR__',
+        'Parent', 'self' // http://php.net/manual/en/reserved.php#78260
     );
     
     public $namespaces = null;

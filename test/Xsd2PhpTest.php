@@ -1,16 +1,16 @@
 <?php
 
-set_include_path(get_include_path().PATH_SEPARATOR.
-                realpath("../src"));
+//set_include_path(get_include_path().PATH_SEPARATOR.
+//                realpath("../src"));
 
 use oasis\names\specification\ubl\schema\xsd\CommonBasicComponents_2;
 use dk\nordsign\schema\ContactCompany;
 use com\mikebevz\xsd2php;
 
-require_once "com/mikebevz/xsd2php/Xsd2Php.php";
-require_once "Bootstrap.php";
+//require_once "com/mikebevz/xsd2php/Xsd2Php.php";
+//require_once "Bootstrap.php";
 
-class Xsd2PhpTest extends LegkoXMLTestCase
+class Xsd2PhpTest extends xsd2php\LegkoXMLTestCase
 {
     /**
      * XSD to PHP convertor class
@@ -43,13 +43,14 @@ class Xsd2PhpTest extends LegkoXMLTestCase
          rmdir($dir); 
        } 
     }*/
-    
+
     public function testXSDMustBeConvertedToXML() {
         $xml = $this->tclass->getXML();
         $actual = $xml->saveXml();
         //file_put_contents(dirname(__FILE__).'/data/expected/ubl2.0/XSDConvertertoXML.xml', $xml->saveXml());
-        $expected = file_get_contents(dirname(__FILE__).'/data/expected/ubl2.0/XSDConvertertoXML.xml');
-        $this->assertEquals($expected, $actual);
+
+        $expFn = dirname(__FILE__).'/data/expected/ubl2.0/XSDConvertertoXML.xml';
+        assertXmlEqual($this,$expFn,$actual);
     }
     
     public function testPHPFilesMustBeSaved() {
@@ -87,7 +88,7 @@ class Xsd2PhpTest extends LegkoXMLTestCase
     }
     
     public function testSimpleSchema1() {
-        $this->tclass = new xsd2php\Xsd2Php("../resources/simple1/simple.xsd");
+        $this->tclass = new xsd2php\Xsd2Php(__DIR__."/../resources/simple1/simple.xsd");
         $xml = $this->tclass->getXML();
         //file_put_contents(dirname(__FILE__).'/data/expected/simple1/generated.xml', $xml->saveXml());
         $expectedXml = file_get_contents(dirname(__FILE__).'/data/expected/simple1/generated.xml');
@@ -147,7 +148,7 @@ class Xsd2PhpTest extends LegkoXMLTestCase
     
     public function testMultiLevelImportAndIncludes() {
          
-         $this->tclass = new xsd2php\Xsd2Php("../resources/MultiLevelImport/ContactPerson.xsd");
+         $this->tclass = new xsd2php\Xsd2Php(__DIR__."/../resources/MultiLevelImport/ContactPerson.xsd");
          $xml = $this->tclass->getXML();
          //file_put_contents(dirname(__FILE__).'/data/expected/MultiLevelImport/generated.xml', $xml->saveXml());
          $expectedXml = file_get_contents(dirname(__FILE__).'/data/expected/MultiLevelImport/generated.xml');
@@ -169,11 +170,12 @@ class Xsd2PhpTest extends LegkoXMLTestCase
         $expPath = dirname(__FILE__).'/data/expected/ContactPerson1/';
         $genPath = dirname(__FILE__).'/data/generated/ContactPerson1/';
         
-         $this->tclass = new xsd2php\Xsd2Php("../resources/ContactPerson1/ContactPerson.xsd");
+         $this->tclass = new xsd2php\Xsd2Php(__DIR__."/../resources/ContactPerson1/ContactPerson.xsd");
          $xml = $this->tclass->getXML();
          //file_put_contents($expPath.'generated.xml', $xml->saveXml());
-         $expectedXml = file_get_contents($expPath.'generated.xml');
-         $this->assertEquals($expectedXml, $xml->saveXml());
+
+         $expectedXmlFn = $expPath.'generated.xml';
+         assertXmlEqual($this,$expectedXmlFn,$xml->saveXml());
          
          if (file_exists($genPath)) {
             rmdir_recursive(realpath($genPath));
@@ -193,11 +195,12 @@ class Xsd2PhpTest extends LegkoXMLTestCase
         $expPath = dirname(__FILE__).'/data/expected/ContactCompany/';
         $genPath = dirname(__FILE__).'/data/generated/ContactCompany/';
         
-         $this->tclass = new xsd2php\Xsd2Php("../resources/ContactCompany/ContactCompany.xsd");
+         $this->tclass = new xsd2php\Xsd2Php(__DIR__."/../resources/ContactCompany/ContactCompany.xsd");
          $xml = $this->tclass->getXML();
          //file_put_contents($expPath.'generated.xml', $xml->saveXml());
-         $expectedXml = file_get_contents($expPath.'generated.xml');
-         $this->assertEquals($expectedXml, $xml->saveXml());
+         $expectedXmlFn = $expPath.'generated.xml';
+         assertXmlEqual($this,$expectedXmlFn,$xml->saveXml());
+
          
          if (file_exists($genPath)) {
             rmdir_recursive(realpath($genPath));

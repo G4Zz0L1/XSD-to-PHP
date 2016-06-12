@@ -17,8 +17,8 @@ namespace com\mikebevz\xsd2php;
  * limitations under the License.
  */
 
-require_once dirname(__FILE__).'/Common.php';
-require_once dirname(__FILE__).'/NullLogger.php';
+//require_once dirname(__FILE__).'/Common.php';
+//require_once dirname(__FILE__).'/NullLogger.php';
 
 /**
  * PHP to XML converter

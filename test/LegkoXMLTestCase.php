@@ -1,7 +1,8 @@
 <?php
 
+namespace com\mikebevz\xsd2php;
 
-class LegkoXMLTestCase extends PHPUnit_Framework_TestCase {
+class LegkoXMLTestCase extends \PHPUnit_Framework_TestCase {
 
     
     protected function assertDirContentsEquals($expDir, $actDir) {
@@ -13,7 +14,7 @@ class LegkoXMLTestCase extends PHPUnit_Framework_TestCase {
             throw new RuntimeException("Actual dir not found: ".$actDir);
         }
 
-        $dir = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($expDir));
+        $dir = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($expDir));
         $expFiles = array();
         while($dir->valid()) {
             if (!$dir->isDot()) {
@@ -22,7 +23,7 @@ class LegkoXMLTestCase extends PHPUnit_Framework_TestCase {
             $dir->next();
         }
 
-        $dir = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($actDir));
+        $dir = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($actDir));
         $actFiles = array();
         while($dir->valid()) {
             if (!$dir->isDot()) {
@@ -31,7 +32,10 @@ class LegkoXMLTestCase extends PHPUnit_Framework_TestCase {
             $dir->next();
         }
 
-        $this->assertEquals($expFiles, $actFiles);
+        $expFilesFn = tempnam(sys_get_temp_dir(), 'Tux');
+        file_put_contents($expFilesFn,json_encode($expFiles,JSON_PRETTY_PRINT));
+        $actFilesSt = json_encode($actFiles,JSON_PRETTY_PRINT);
+        assertXmlEqual($this, $expFilesFn, $actFilesSt);
 
         foreach ($expFiles as $key => $value) {
             $expFile = file_get_contents($expDir.DIRECTORY_SEPARATOR.$value);

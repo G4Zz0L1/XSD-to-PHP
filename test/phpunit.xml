@@ -1,4 +1,4 @@
-<phpunit colors="true" bootstrap="Bootstrap.php"
+<phpunit colors="true" bootstrap="Bootstrap2.php"
 	convertErrorsToExceptions="true" convertNoticesToExceptions="true"
 	convertWarningsToExceptions="true" processIsolation="true" stopOnFailure="false"
 	syntaxCheck="false">
@@ -7,11 +7,11 @@
 			<file>BindTest.php</file>
 			<file>Php2XmlTest.php</file>
 			<file>Xsd2PhpTest.php</file>
-			<file>WsdlTest.php</file>
-			<file>SoapServerTest.php</file>
+<!--			<file>WsdlTest.php</file>
+			<file>SoapServerTest.php</file>-->
 		</testsuite>
-		<testsuite name="Xsd2Php" >
+<!--		<testsuite name="Xsd2Php" >
 			<file>Xsd2Php/MavenXsdTest.php</file>
-		</testsuite>
+		</testsuite>-->
 	</testsuites>
 </phpunit>

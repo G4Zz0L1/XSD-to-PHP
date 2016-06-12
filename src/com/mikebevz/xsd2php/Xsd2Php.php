@@ -17,8 +17,8 @@ namespace com\mikebevz\xsd2php;
  * limitations under the License.
  */
 
-require_once dirname(__FILE__).'/PHPClass.php';
-//require_once dirname(__FILE__).'/Common.php';
+//require_once dirname(__FILE__).'/PHPClass.php';
+////require_once dirname(__FILE__).'/Common.php';
 
 /**
  * Generate PHP classes based on XSD schema
@@ -57,7 +57,7 @@ class Xsd2Php extends Common
      * Show debug info
      * @var boolean
      */
-    public $debug = true;
+    public $debug = false;
 
     /**
      * Namespaces = array (className => namespace ), used in dirs/files generation
@@ -288,7 +288,7 @@ class Xsd2Php extends Common
 
                 if ($node->nodeName == $this->xsdNs.":import") {
                     // Do not change Namespace for import and include tags
-                    //if ($this->debug) print("Insert Import ".$node->nodeName." NS=". $node->getAttribute('namespace'). "\n");
+                    if ($this->debug) print("Insert Import ".$node->nodeName." NS=". $node->getAttribute('namespace'). "\n");
 
                     $loc = realpath($filepath.DIRECTORY_SEPARATOR.$node->getAttribute('schemaLocation'));
                     $node->setAttribute('schemaLocation', $loc);
@@ -366,7 +366,7 @@ class Xsd2Php extends Common
 
                     if ($namespace != '') {
                         $newNodeNs = $xsd->createAttribute("namespace");
-                        $textEl = $xsd->createTextNode($namespace);
+                        $textEl = $xsd->createTextNode("SHB".$namespace);
                         $newNodeNs->appendChild($textEl);
                         $node->appendChild($newNodeNs);
                     }

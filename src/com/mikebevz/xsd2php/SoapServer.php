@@ -15,8 +15,8 @@ namespace com\mikebevz\xsd2php;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-require_once 'Bind.php';
-require_once 'Php2Xml.php';
+//require_once 'Bind.php';
+//require_once 'Php2Xml.php';
 
 /**
  * Class aware SOAP Server implementation

@@ -1,8 +1,8 @@
 <?php
 namespace com\mikebevz\xsd2php\wsdl;
 
-require_once 'AbstractWsdl.php';
-require_once 'IWsdl.php';
+//require_once 'AbstractWsdl.php';
+//require_once 'IWsdl.php';
 
 class Wsdl_2_0 extends AbstractWsdl implements IWsdl {
     

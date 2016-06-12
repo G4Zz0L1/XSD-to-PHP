@@ -1,11 +1,11 @@
 <?php
-set_include_path(get_include_path().PATH_SEPARATOR.
-realpath("../../src"));
+//set_include_path(get_include_path().PATH_SEPARATOR.
+//realpath("../../src"));
 
 use com\mikebevz\xsd2php;
 
-require_once "com/mikebevz/xsd2php/Xsd2Php.php";
-require_once realpath(dirname(__FILE__)."/../Bootstrap.php");
+//require_once "com/mikebevz/xsd2php/Xsd2Php.php";
+//require_once realpath(dirname(__FILE__)."/../Bootstrap.php");
 
 class MavenXsdTest extends LegkoXMLTestCase
 {
@@ -26,7 +26,7 @@ class MavenXsdTest extends LegkoXMLTestCase
         $this->xsd = realpath(dirname(__FILE__)."/../../resources/maven/maven-v4_0_0.xsd");
         $this->expectedDir = realpath(dirname(__FILE__)."/../data/expected/Xsd2Php/MavenTests");
         $this->generatedDir = realpath(dirname(__FILE__)."/../data/generated/Xsd2Php/MavenTests");
-        $this->tclass = new xsd2php\Xsd2Php($this->xsd);
+        $this->tclass = new xsd2php\Xsd2Php($this->xsd,false);
     }
     protected function tearDown ()
     {

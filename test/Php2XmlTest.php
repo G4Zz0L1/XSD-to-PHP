@@ -15,7 +15,7 @@ set_include_path(dirname(__FILE__).'/data/expected/ubl2.0'.PATH_SEPARATOR.
                  get_include_path());
                         
 
-require_once "com/mikebevz/xsd2php/Php2Xml.php";
+//require_once "com/mikebevz/xsd2php/Php2Xml.php";
 
 class Php2XmlTest extends PHPUnit_Framework_TestCase
 {
@@ -74,7 +74,7 @@ class Php2XmlTest extends PHPUnit_Framework_TestCase
         
        $xml = $php2xml->getXml($order);
        //file_put_contents("data/expected/ubl2.0/Order.xml", $xml);
-       $expected = file_get_contents("data/expected/ubl2.0/Order.xml");
+       $expected = file_get_contents(__DIR__."/data/expected/ubl2.0/Order.xml");
        //print_r($xml);
        $this->assertEquals($expected, $xml);
        
@@ -144,7 +144,7 @@ class Php2XmlTest extends PHPUnit_Framework_TestCase
        
        //file_put_contents("data/expected/simple1/shiporder.xml", $xml);
        
-       $expected = file_get_contents("data/expected/simple1/shiporder.xml");
+       $expected = file_get_contents(__DIR__."/data/expected/simple1/shiporder.xml");
        
        $this->assertEquals($expected, $xml);
        //print_r($xml);
@@ -208,7 +208,7 @@ class Php2XmlTest extends PHPUnit_Framework_TestCase
         
         //file_put_contents("data/expected/ContactCompany/ContactCompany.xml", $xml);
        
-        $expected = file_get_contents("data/expected/ContactCompany/ContactCompany.xml");
+        $expected = file_get_contents(__DIR__."/data/expected/ContactCompany/ContactCompany.xml");
        
         $this->assertEquals($expected, $xml);
     }

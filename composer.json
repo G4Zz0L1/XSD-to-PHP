@@ -1,0 +1,27 @@
+{
+    "name": "moyarada/XSD-to-PHP",
+    "description": "Legko XML: compile XSD schema to PHP, XML marshalling/unmashalling http://mikebevz.com/xsd-to-php-tool/",
+    "type": "library",
+    "require-dev": {
+        "phpunit/phpunit": "*",
+        "jakub-onderka/php-parallel-lint": "^0.9"
+    },
+    "require": {
+        "zendframework/zend-console": "*"
+    },
+    "autoload": {
+        "psr-4" : { "" : "src" }
+    },
+    "autoload-dev": {
+        "psr-4" : {
+           "com\\mikebevz\\xsd2php\\" : "test/",
+           "" : ["test/data/expected/ContactCompany/","test/data/expected/ubl2.0"]
+        }
+    },
+    "scripts": {
+        "test": [
+            "parallel-lint . --exclude vendor",
+            "phpunit -c test/phpunit.xml"
+        ]
+    }
+}

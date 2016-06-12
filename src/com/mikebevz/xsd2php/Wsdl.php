@@ -3,13 +3,13 @@ namespace com\mikebevz\xsd2php;
 
 use com\mikebevz\xsd2php\wsdl;
 
-set_include_path(get_include_path().PATH_SEPARATOR.
-                realpath("../lib/ZF/1.10.7").PATH_SEPARATOR.
-                realpath("../src"));
+//set_include_path(get_include_path().PATH_SEPARATOR.
+//                realpath("../lib/ZF/1.10.7").PATH_SEPARATOR.
+//                realpath("../src"));
 
-require_once 'Zend/Soap/Wsdl.php';
-require_once 'com/mikebevz/xsd2php/Common.php';
-require_once 'com/mikebevz/xsd2php/wsdl/WsdlFactory.php';
+// require_once 'Zend/Soap/Wsdl.php';
+// require_once 'com/mikebevz/xsd2php/Common.php';
+// require_once 'com/mikebevz/xsd2php/wsdl/WsdlFactory.php';
 
 class Wsdl extends Common 
 {

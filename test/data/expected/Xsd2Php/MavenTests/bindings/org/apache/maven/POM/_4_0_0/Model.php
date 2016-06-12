@@ -27,7 +27,7 @@ class Model
 	 * @xmlNamespace http://maven.apache.org/POM/4.0.0
 	 * @xmlMinOccurs 0
 	 * @xmlName parent
-	 * @var org\apache\maven\POM\_4_0_0\Parent
+	 * @var org\apache\maven\POM\_4_0_0\MavenParent
 	 */
 	public $parent;
 	/**

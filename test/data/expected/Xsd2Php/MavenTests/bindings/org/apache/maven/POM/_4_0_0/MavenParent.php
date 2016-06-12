@@ -4,11 +4,11 @@ namespace org\apache\maven\POM\_4_0_0;
 /**
  * @xmlNamespace http://maven.apache.org/POM/4.0.0
  * @xmlType 
- * @xmlName Parent
- * @var org\apache\maven\POM\_4_0_0\Parent
+ * @xmlName MavenParent
+ * @var org\apache\maven\POM\_4_0_0\MavenParent
  * @xmlDefinition 4.0.0
  */
-class Parent
+class MavenMavenParent
 	{
 
 	
@@ -69,4 +69,4 @@ class Parent
 	public $relativePath;
 
 
-} // end class Parent
+} // end class MavenParent

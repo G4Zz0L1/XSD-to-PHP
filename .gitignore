@@ -6,3 +6,4 @@
 .svn
 org.eclipse.*
 *.log
+vendor

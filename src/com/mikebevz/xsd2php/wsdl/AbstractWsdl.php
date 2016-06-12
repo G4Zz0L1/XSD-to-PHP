@@ -3,7 +3,7 @@ namespace com\mikebevz\xsd2php\wsdl;
 
 use com\mikebevz\xsd2php;
 
-require_once dirname(__FILE__).'/../Common.php';
+//require_once dirname(__FILE__).'/../Common.php';
 
 abstract class AbstractWsdl {
     

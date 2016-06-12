@@ -1,8 +1,8 @@
 <?php
 namespace com\mikebevz\xsd2php\wsdl;
 
-require_once 'Wsdl_1_1.php';
-require_once 'Wsdl_2_0.php';
+//require_once 'Wsdl_1_1.php';
+//require_once 'Wsdl_2_0.php';
 
 class WsdlFactory  {
     

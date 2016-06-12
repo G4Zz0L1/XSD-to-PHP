@@ -1,8 +1,8 @@
 <?php
-set_include_path(get_include_path().PATH_SEPARATOR.
-                realpath("../src"));
+//set_include_path(get_include_path().PATH_SEPARATOR.
+//                realpath("../src"));
                 
-require_once 'com/mikebevz/xsd2php/Wsdl.php';
+//require_once 'com/mikebevz/xsd2php/Wsdl.php';
 require_once 'data/expected/ContactPersonWsdl/services/NavService.php';
 
 

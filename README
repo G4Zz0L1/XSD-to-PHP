@@ -13,6 +13,27 @@ With the present library you are able to compile PHP binding from XML Schema fil
 and consequently, bind XML files to PHP models (unmarshalling), and save PHP bindings 
 as XML (marshalling).
 
+Installation
+
+ # Enable the php5 XSL extension: [sudo] apt-get install php5-xsl
+ # Add the following to your composer.json file
+
+  "repositories": [
+    { 
+      "url": "https://github.com/moyarada/XSD-to-PHP",
+      "type": "git"
+    }
+  ],
+  "require": {
+    "moyarada/XSD-to-PHP": "dev-master"
+  }
+ # composer install
+
+Testing
+
+ # git clone ...
+ #composer run-script test
+
 Versions history
 
 Current release
