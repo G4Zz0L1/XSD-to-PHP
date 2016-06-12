@@ -7,7 +7,7 @@ use com\mikebevz\xsd2php;
 //require_once "com/mikebevz/xsd2php/Xsd2Php.php";
 //require_once realpath(dirname(__FILE__)."/../Bootstrap.php");
 
-class MavenXsdTest extends LegkoXMLTestCase
+class MavenXsdTest extends xsd2php\LegkoXMLTestCase
 {
 
     /**
@@ -57,8 +57,8 @@ class MavenXsdTest extends LegkoXMLTestCase
         $xml = $this->tclass->getXML();
         $actual = $xml->saveXml();
         //file_put_contents($this->expectedDir.'/ParsedSchema.xml', $xml->saveXml());
-        $expected = file_get_contents($this->expectedDir.'/ParsedSchema.xml');
-        $this->assertEquals($expected, $actual);
+        $expectedFn = $this->expectedDir.'/ParsedSchema.xml';
+        assertXmlEqual($this,$expectedFn,$actual);
     }
 
     public function testSavePHPBindings() {
