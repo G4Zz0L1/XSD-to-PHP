@@ -68,7 +68,7 @@ class Php2Xml extends Common {
         if ($phpClass != null) {
             $this->phpClass = $phpClass;
         }
-        
+
         $propDocs = $this->parseClass($this->phpClass, $this->dom, true);
         
         foreach ($propDocs as $name => $data) {
@@ -121,14 +121,13 @@ class Php2Xml extends Common {
         }
         
         $properties = $refl->getProperties();
-        
+
         $propDocs = array();
         foreach ($properties as $prop) {
             $pDocs = $this->parseDocComments($prop->getDocComment());
             $propDocs[$prop->getName()] = $pDocs;
             $propDocs[$prop->getName()]['value'] = $prop->getValue($object);
         }
-        
         return $propDocs;
     }
     
@@ -196,7 +195,20 @@ class Php2Xml extends Common {
         $classDocs  = $this->parseDocComments($refl->getDocComment());
         $classProps = $refl->getProperties(); 
         $namespace = $classDocs['xmlNamespace'];
-        //print_r($classProps);
+
+        // First check for properties that come from an extended class, and move them to after those of the parent class
+        // Ref: http://stackoverflow.com/questions/18847801/xml-schema-extension-order
+        $reorderedClassProps=array("current"=>array(),"parent"=>array());
+        foreach($classProps as $prop) {
+          if($prop->getDeclaringClass()->getName() != get_class($obj)) {
+            array_push($reorderedClassProps["parent"],$prop);
+          } else {
+            array_push($reorderedClassProps["current"],$prop);
+          }
+        }
+        $classProps = array_merge($reorderedClassProps["parent"],$reorderedClassProps["current"]);
+
+        // now, after reordering if needed, continue
         foreach($classProps as $prop) {
             $propDocs = $this->parseDocComments($prop->getDocComment());
             //print_r($prop->getDocComment());
@@ -218,21 +230,26 @@ class Php2Xml extends Common {
                 if ($prop->getValue($obj) != '') {
                     if ($propDocs['xmlType'] == 'element') {
                         $el = '';
-                        $code = $this->getNsCode($propDocs['xmlNamespace']);
+                        $elName = $propDocs['xmlName'];
+			if (array_key_exists('xmlNamespace', $propDocs)) {
+                            $code = $this->getNsCode($propDocs['xmlNamespace']);
+			    $elName = $code.':'.$elName;
+			}
+
                         $value = $prop->getValue($obj);
                         
                         if (is_array($value)) {
-                            $this->logger->debug("Creating element:".$code.":".$propDocs['xmlName']);
+                            $this->logger->debug("Creating element:".$elName);
                             $this->logger->debug(print_r($value, true));
                             foreach ($value as $node) {
                                 $this->logger->debug(print_r($node, true));
-                                $el = $this->dom->createElement($code.":".$propDocs['xmlName']);
+                                $el = $this->dom->createElement($elName);
                                 $arrNode = $this->parseObjectValue($node, $el);
                                 $element->appendChild($arrNode);
                             }
                             
                         } else {
-                            $el = $this->dom->createElement($code.":".$propDocs['xmlName'], $value);
+                            $el = $this->dom->createElement($elName, $value);
                             $element->appendChild($el);
                         }
                         //print_r("Added element ".$propDocs['xmlName']." with NS = ".$propDocs['xmlNamespace']." \n");

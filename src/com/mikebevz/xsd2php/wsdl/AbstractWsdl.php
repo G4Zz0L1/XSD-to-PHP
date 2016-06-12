@@ -393,7 +393,7 @@ abstract class AbstractWsdl {
         }       
         
         if (!file_exists($this->getSchemasPath())) {
-            throw new \RuntimeException("Schemas path doesn't exist - cannot start search for imports");
+            throw new \RuntimeException("Schemas path '".$this->getSchemasPath()."' doesn't exist - cannot start search for imports");
         }
         
         if ($this->getPublicPath() == null || !file_exists($this->getPublicPath())) {

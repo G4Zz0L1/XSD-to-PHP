@@ -213,4 +213,78 @@ class Php2XmlTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $xml);
     }
     
+    public function testSimple1Extension() {
+        require_once 'shiporderExtension.php';
+        require_once 'item.php';
+        require_once 'coloredItem.php';
+        require_once 'note.php';
+        require_once 'price.php';
+        require_once 'quantity.php';
+        require_once 'title.php';
+        require_once 'orderperson.php';
+        require_once 'shipto.php';
+        require_once 'address.php';
+        require_once 'city.php';
+        require_once 'country.php';
+        require_once 'name.php';
+        
+        $shiporder = new shiporderExtension();
+        $item = new coloredItem();
+        
+        $note = new note();
+        $note->value = "Note";
+        $item->note = $note;
+        
+        $price = new price();
+        $price->value = 125.5;    
+        $item->price = $price;
+        
+        $quantity = new quantity();
+        $quantity->value = 145;
+        $item->quantity = $quantity;
+        
+        $title = new title();
+        $title->value = 'Example title';
+        $item->title = $title;
+
+        $item->color="red";
+       
+        $shiporder->coloredItem = $item;
+        
+        $shiporder->orderid = 'Order ID';
+        $orderperson = new orderperson();
+        $orderperson->value = "Jon Doe";        
+        
+        $shiporder->orderperson = $orderperson;
+        
+        $shipto = new shipto();
+        $address = new address();
+        $address->value = "Big Valley Str. 142";
+        
+        $shipto->address = $address;
+        $city = new city();
+        $city->value = "Aalborg"; 
+        $shipto->city = $city;
+        $country = new country();
+        $country->value = "Denmark";
+        $shipto->country = $country;
+        $name = new name();
+        $name->value = "Jon Doe Company";
+        $shipto->name = $name;
+        
+        $shiporder->shipto = $shipto;
+       
+        
+        $php2xml = new xsd2php\Php2Xml();
+        
+        $xml = $php2xml->getXml($shiporder);
+       
+       //file_put_contents("data/expected/simple1/shiporder.xml", $xml);
+       
+       $expected = file_get_contents(__DIR__."/data/expected/simple1/shiporderExtension.xml");
+       
+       $this->assertEquals($expected, $xml);
+       //print_r($xml);
+    }
+
 }

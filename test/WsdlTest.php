@@ -17,11 +17,12 @@ class WsdlTest extends PHPUnit_Framework_TestCase
      */
     private $tclass; 
 
-    private $expDir = "data/expected/ContactPersonWsdl";
-    private $genDir = "data/generated/ContactPersonWsdl";
-    
+   
     protected function setUp ()
     {
+        $this->expDir = __DIR__."/data/expected/ContactPersonWsdl";
+        $this->genDir = __DIR__."/data/generated/ContactPersonWsdl";
+ 
         //$this->xsd = dirname(__FILE__)."/../resources/ubl2.0/maindoc/UBL-Order-2.0.xsd";
         $this->tclass = new wsdl\WsdlFactory();
     }
@@ -42,7 +43,7 @@ class WsdlTest extends PHPUnit_Framework_TestCase
         $this->tclass->setService($service);
         $this->tclass = $this->tclass->getImplementation($service);
         $this->tclass->setLocation("http://mylocation.com/soap/");
-        $this->tclass->setSchemasPath("../resources/ContactWsdl");
+        $this->tclass->setSchemasPath(__DIR__."/../resources/ContactWsdl");
         $this->tclass->setPublicPath(realpath($this->genDir."/public/schemas"));
         $this->tclass->setPublicUrl("/schemas");
         $this->tclass->setDebug(true);
