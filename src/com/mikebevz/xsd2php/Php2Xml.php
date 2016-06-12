@@ -153,16 +153,22 @@ class Php2Xml extends Common {
             } else {
                 $el = $this->dom->createElement($docs['xmlName']);
             }
-            
+
             if (is_object($docs['value'])) {
                 //print_r("Value is object \n");
                 $el = $this->parseObjectValue($docs['value'], $el);
             } elseif (is_string($docs['value'])) {
+                $elName = $docs['xmlName'];
                 if (array_key_exists('xmlNamespace', $docs)) {
                     $code = $this->getNsCode($docs['xmlNamespace']);
-                    $el = $this->dom->createElement($code.":".$docs['xmlName'], $docs['value']);
+                    $elName = $code.":".$elName;
+                }
+
+                if($docs["xmlType"]=="attribute") {
+                  $el = $this->dom->createAttribute($elName);
+                  $el->value=$docs['value'];
                 } else {
-                    $el = $this->dom->createElement($docs['xmlName'], $docs['value']);
+                  $el = $this->dom->createElement($elName, $docs['value']);
                 }
             } else {
                 //print_r("Value is not string");
@@ -184,7 +190,7 @@ class Php2Xml extends Common {
     private function parseObjectValue($obj, $element) {
         
         $this->logger->debug("Start with:".$element->getNodePath());
-        
+       
         $refl = new \ReflectionClass($obj);
         
         $classDocs  = $this->parseDocComments($refl->getDocComment());
