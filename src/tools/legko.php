@@ -7,6 +7,7 @@
 //    PATH_SEPARATOR.$root."/lib/ZF/1.10.7".
 //    PATH_SEPARATOR.$sourceFolder
 //);
+require __DIR__.'/../../vendor/autoload.php';
 
 use com\mikebevz\xsd2php\LegkoXML; // require_once 'com/mikebevz/xsd2php/LegkoXML.php';
 use Zend\Console\Getopt as Zend_Console_Getopt; // require_once 'Zend/Console/Getopt.php';
