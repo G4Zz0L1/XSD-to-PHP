@@ -240,7 +240,7 @@ class Php2XmlTest extends PHPUnit_Framework_TestCase
         $item->price = $price;
         
         $quantity = new quantity();
-        $quantity->value = 145;
+        $quantity->value = 0; // test that a value of 0 still shows up in xml
         $item->quantity = $quantity;
         
         $title = new title();
