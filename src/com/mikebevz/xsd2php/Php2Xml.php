@@ -17,9 +17,6 @@ namespace com\mikebevz\xsd2php;
  * limitations under the License.
  */
 
-//require_once dirname(__FILE__).'/Common.php';
-//require_once dirname(__FILE__).'/NullLogger.php';
-
 /**
  * PHP to XML converter
  * 
@@ -51,11 +48,15 @@ class Php2Xml extends Common {
         }
         
         // @todo implement logger injection
-        if (class_exists('\Zend_Registry')) { // this does not work due to PHP bug @see http://bugs.php.net/bug.php?id=46813
-            $this->logger = \Zend_Registry::get('logger');
-        } else {
-            $this->logger = new NullLogger(); 
-        }
+        // Ref: https://zendframework.github.io/zend-log/intro/
+        // Also check "Stubbing the writer" here: https://zendframework.github.io/zend-log/writers/
+        $this->logger = new \Zend\Log\Logger;
+        $writer = new \Zend\Log\Writer\Stream('php://output');
+        $filter = new \Zend\Log\Filter\Priority(\Zend\Log\Logger::CRIT); // DEBUG
+        $writer->addFilter($filter);
+        $this->logger->addWriter($writer);
+
+        $this->logger->debug("Php2Xml constructor");
         
         $this->buildXml();
     }
@@ -143,19 +144,23 @@ class Php2Xml extends Common {
     
     
     private function addProperty($docs, $dom) {
-        if ($docs['value'] != '') {
+      $this->logger->debug($docs);
+      if ($docs['value'] === '') return;
+      if (is_null($docs['value'])) return;
+
             $el = "";
             
-            if (array_key_exists('xmlNamespace', $docs)) {
-                $code = $this->getNsCode($docs['xmlNamespace']);
-                $el = $this->dom->createElement($code.":".$docs['xmlName']);
-            } else {
-                $el = $this->dom->createElement($docs['xmlName']);
-            }
-
             if (is_object($docs['value'])) {
                 //print_r("Value is object \n");
+                $elName = $docs['xmlName'];
+                if (array_key_exists('xmlNamespace', $docs)) {
+                    $code = $this->getNsCode($docs['xmlNamespace']);
+                    $elName = $code.":".$elName;
+                }
+                $el = $this->dom->createElement($elName);
                 $el = $this->parseObjectValue($docs['value'], $el);
+            } elseif ($docs['xmlType']=='value') {
+              $el = new \DOMText($docs['value']);
             } elseif (is_string($docs['value'])) {
                 $elName = $docs['xmlName'];
                 if (array_key_exists('xmlNamespace', $docs)) {
@@ -174,7 +179,6 @@ class Php2Xml extends Common {
             }
             
             $dom->appendChild($el);
-        }
     }
   
     /**
@@ -186,8 +190,8 @@ class Php2Xml extends Common {
      * 
      * @return DOMElement
      */
-    private function parseObjectValue($obj, $element) {
-        
+    public function parseObjectValue($obj, $element) {
+      if(!$element) throw new \Exception("element should be truthy: '".$element."'");
         $this->logger->debug("Start with:".$element->getNodePath());
        
         $refl = new \ReflectionClass($obj);
@@ -227,7 +231,9 @@ class Php2Xml extends Common {
                 
                 $element->appendChild($el);
             } else {
-                if ($prop->getValue($obj) != '') {
+                if ($prop->getValue($obj) === '') continue;
+                if (is_null($prop->getValue($obj))) continue;
+
                     if ($propDocs['xmlType'] == 'element') {
                         $el = '';
                         $elName = $propDocs['xmlName'];
@@ -265,7 +271,6 @@ class Php2Xml extends Common {
                         $txtNode = $this->dom->createTextNode($prop->getValue($obj));
                         $element->appendChild($txtNode);
                     } 
-                }
             }
         }
         

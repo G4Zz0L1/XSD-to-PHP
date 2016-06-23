@@ -240,7 +240,7 @@ class Php2XmlTest extends PHPUnit_Framework_TestCase
         $item->price = $price;
         
         $quantity = new quantity();
-        $quantity->value = 0; // test that a value of 0 still shows up in xml
+        $quantity->value = 145;
         $item->quantity = $quantity;
         
         $title = new title();
@@ -285,6 +285,16 @@ class Php2XmlTest extends PHPUnit_Framework_TestCase
        
        $this->assertEquals($expected, $xml);
        //print_r($xml);
+    }
+
+    public function testGetXmlValueZero() {
+        require_once 'quantity.php';
+        $quantity = new quantity();
+        $quantity->value = 0; // test that a value of 0 still shows up in xml
+        $xml = $this->tclass->getXml($quantity);
+        # file_put_contents(__DIR__."/data/expected/testValueZero.xml",$xml);
+        $expected = file_get_contents(__DIR__."/data/expected/testValueZero.xml");
+        $this->assertEquals($xml,$expected);
     }
 
 }
