@@ -1,5 +1,5 @@
 {
-    "name": "shadiakiki1986/XSD-to-PHP",
+    "name": "shadiakiki1986/xsd-to-php",
     "description": "Legko XML: compile XSD schema to PHP, XML marshalling/unmashalling http://mikebevz.com/xsd-to-php-tool/",
     "type": "library",
     "require-dev": {
