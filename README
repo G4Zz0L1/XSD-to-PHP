@@ -18,17 +18,7 @@ as XML (marshalling).
 Installation
 
  # Enable the php5 XSL extension: [sudo] apt-get install php5-xsl
- # Add the following to your composer.json file
-
-  "repositories": [
-    { 
-      "url": "https://github.com/moyarada/XSD-to-PHP",
-      "type": "git"
-    }
-  ],
-  "require": {
-    "moyarada/XSD-to-PHP": "dev-master"
-  }
+ # composer require shadiakiki1986/xsd-to-php
  # composer install
 
 Testing
